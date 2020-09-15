@@ -110,14 +110,72 @@ app.get("/", (req, res) => {
   Game.find({}, function(err, foundGames) {
     // gamesList = foundGames;
     let totalSales = 0;
+    let salesObject = [ 
+      { name: 'Sports', y: 0, count: 0 }, 
+      { name: 'Platform', y: 0, count: 0 }, 
+      { name: 'Racing', y: 0, count: 0 }, 
+      { name: 'Misc', y: 0, count: 0 }, 
+      { name: 'Shooter', y: 0, count: 0 } 
+    ] 
+
+    let updatedObject = {
+      'Sports': {y: 0, count: 0},
+      'Platform': {y: 0, count: 0},
+      'Racing': {y: 0, count: 0},
+      'Misc': {y: 0, count: 0},
+      'Shooter': {y: 0, count: 0},
+    }
+
     foundGames.map(e=>{
-      parsedSales = parseInt(e.globalsales)
-      totalSales += parsedSales
-      console.log(totalSales)
+      switch (e.genre) {
+        case 'Sports':
+          if (updatedObject[e.genre].count != 100) {
+            updatedObject[e.genre].y += parseInt(e.globalsales)
+            updatedObject[e.genre].count += 1
+          }
+          break;
+        case 'Platform':
+          if (updatedObject[e.genre].count != 100) {
+          updatedObject[e.genre].y += parseInt(e.globalsales)
+          updatedObject[e.genre].count += 1
+          }
+          break;
+        case 'Racing':
+          if (updatedObject[e.genre].count != 100) {
+          updatedObject[e.genre].y += parseInt(e.globalsales)
+          updatedObject[e.genre].count += 1
+          }
+          break;
+        case 'Misc':
+          if (updatedObject[e.genre].count != 100) {
+          updatedObject[e.genre].y += parseInt(e.globalsales)
+          updatedObject[e.genre].count += 1
+          }
+          break;
+        case 'Shooter':
+          if (updatedObject[e.genre].count != 100) {
+          updatedObject[e.genre].y += parseInt(e.globalsales)
+          updatedObject[e.genre].count += 1
+          }
+          break;
+
+        default:
+      }
+      
+
+      // if (e.genre == 'Sports') {
+      // es
+      // console.log(totalSales)
+    // } else if (e.genre == 'Platform/') {
+
+    // }
     });
+    console.log(salesObject[0].y)
     // console.log(foundGames[1].globalsales)
     // console.log(foundGames)
-      res.send({ message: "We did it!", gamesList: foundGames[0].name, totalSales: totalSales});
+      res.send({ message: "We did it!", gamesList: foundGames[0].name, sports: updatedObject.Sports.y,
+    platform: updatedObject.Platform.y, racing: updatedObject.Racing.y, misc: updatedObject.Misc.y,
+    shooter: updatedObject.Shooter.y });
     if (foundGames.length === 0) {
         secondFunction();
         console.log("no games")
@@ -141,15 +199,8 @@ app.get("/", (req, res) => {
         })
       }}).then((data)=>{
         
-      })
-      
-      ;
+      });
   
-
-
-
-
-
   // secondFunction()
   // console.log(gamesList)
   
