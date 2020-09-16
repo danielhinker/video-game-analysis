@@ -97,5 +97,4 @@ let updatedObject = {
   },
 };
 
-//   export default updatedObject;
 module.exports = { updatedObject };

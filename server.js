@@ -9,9 +9,9 @@ const fs = require("fs");
 const path = require("path");
 const csv = require("csv-parser");
 const { default: Axios } = require("axios");
-const helperObject = require("./helper.js")
+const helperObject = require("./helper.js");
 
-let updatedObject = helperObject.updatedObject
+let updatedObject = helperObject.updatedObject;
 
 app.use(cors());
 app.listen(port, () => console.log("Backend server live on " + port));
@@ -20,21 +20,16 @@ app.use(express.static("public"));
 
 var data = [];
 
-
 function firstFunction() {
   return new Promise((resolve, reject) => {
     fs.createReadStream("client/public/vgsales.csv")
       .pipe(csv())
       .on("data", function (row) {
-
-          if (data.length <= 550) {
-            data.push(row);
-          }
-        
+        if (data.length < 15000) {
+          data.push(row);
+        }
       })
       .on("end", function () {
-        // console.log('Data loaded')
-        // console.log(data)
         resolve(data);
       });
   });
@@ -62,145 +57,116 @@ const gameSchema = new mongoose.Schema({
 const Game = mongoose.model("Game", gameSchema);
 
 async function secondFunction() {
-  // console.log("before");
   let result = await firstFunction();
-  // console.log(typeof result[0].Rank);
-  // console.log("after");
-
-}
-
-
-function calculateRegions() {
-
 }
 
 function addSales(foundGames) {
-  return new Promise((resolve, reject)=>{
-
+  return new Promise((resolve, reject) => {
     foundGames.map((e) => {
-      
-      // console.log(e)
-      if (updatedObject[e.genre].count < 100) {
-        
-        let dictionary = {}
-        
-        // if (dictionary[e.genre].length == 0) {
-          let genre = e.genre
-          let globalsales = e.globalsales
-          
-
-        updatedObject[e.genre].globalsales.totalsales += parseInt(e.globalsales);
-        if (parseFloat(e.globalsales) > updatedObject[e.genre].globalsales.highest) {
-          updatedObject[e.genre].globalsales.highest = parseFloat(e.globalsales)
+      if (updatedObject[e.genre].count < 500) {
+        updatedObject[e.genre].globalsales.totalsales += parseFloat(
+          e.globalsales
+        );
+        if (
+          parseFloat(e.globalsales) > updatedObject[e.genre].globalsales.highest
+        ) {
+          updatedObject[e.genre].globalsales.highest = parseFloat(
+            e.globalsales
+          );
         }
         if (parseFloat(e.nasales) > updatedObject[e.genre].nasales.highest) {
-          updatedObject[e.genre].nasales.highest = parseFloat(e.nasales)
+          updatedObject[e.genre].nasales.highest = parseFloat(e.nasales);
         }
         if (parseFloat(e.eusales) > updatedObject[e.genre].eusales.highest) {
-          updatedObject[e.genre].eusales.highest = parseFloat(e.eusales)
+          updatedObject[e.genre].eusales.highest = parseFloat(e.eusales);
         }
         if (parseFloat(e.jpsales) > updatedObject[e.genre].jpsales.highest) {
-          updatedObject[e.genre].jpsales.highest = parseFloat(e.jpsales)
+          updatedObject[e.genre].jpsales.highest = parseFloat(e.jpsales);
         }
 
-        if (parseFloat(e.globalsales) < updatedObject[e.genre].globalsales.lowest) {
-          updatedObject[e.genre].globalsales.lowest = parseFloat(e.globalsales)
+        if (
+          parseFloat(e.globalsales) < updatedObject[e.genre].globalsales.lowest
+        ) {
+          updatedObject[e.genre].globalsales.lowest = parseFloat(e.globalsales);
         }
         if (parseFloat(e.nasales) < updatedObject[e.genre].nasales.lowest) {
-          updatedObject[e.genre].nasales.lowest = parseFloat(e.nasales)
+          updatedObject[e.genre].nasales.lowest = parseFloat(e.nasales);
         }
         if (parseFloat(e.eusales) < updatedObject[e.genre].eusales.lowest) {
-          updatedObject[e.genre].eusales.lowest = parseFloat(e.eusales)
+          updatedObject[e.genre].eusales.lowest = parseFloat(e.eusales);
         }
         if (parseFloat(e.jpsales) < updatedObject[e.genre].jpsales.lowest) {
-          updatedObject[e.genre].jpsales.lowest = parseFloat(e.jpsales)
+          updatedObject[e.genre].jpsales.lowest = parseFloat(e.jpsales);
         }
 
         updatedObject[e.genre].nasales.totalsales += parseFloat(e.nasales);
         updatedObject[e.genre].eusales.totalsales += parseFloat(e.eusales);
         updatedObject[e.genre].jpsales.totalsales += parseFloat(e.jpsales);
         updatedObject[e.genre].count += 1;
-    }
-    })
+      }
+    });
     if (foundGames.length > 50) {
-    resolve('success')
-  } else {
-    reject('fail')
-  }
-  })
-  
+      console.log(updatedObject)
+      resolve("success");
+    } else {
+      reject("fail");
+    }
+  });
 }
 
 app.get("/", (req, res) => {
-  res.redirect('/main')
-})
+  res.redirect("/main");
+});
 
 app.get("/main", async (req, res) => {
-  // res.send({message:"We did it!"})
   var myPromise = () => {
     return new Promise((resolve, reject) => {
+      Game.find({}, function (err, foundGames) {
+        if (foundGames.length < 5000) {
+          secondFunction();
 
-  Game.find({}, function (err, foundGames) {
-    // gamesList = foundGames;
-    
-    if (foundGames.length < 550) {
-      secondFunction();
-      // console.log(foundGames.length)
-      // console.log("no games");
-      
-      data.map((game) => {
-        const game1 = new Game({
-          rank: game.Rank,
-          name: game.Name,
-          platform: game.Platform,
-          year: game.Year,
-          genre: game.Genre,
-          publisher: game.Publisher,
-          nasales: game.NA_Sales,
-          eusales: game.EU_Sales,
-          jpsales: game.JP_Sales,
-          othersales: game.Other_Sales,
-          globalsales: game.Global_Sales,
-        });
-        game1.save();
+          data.map((game) => {
+            const game1 = new Game({
+              rank: game.Rank,
+              name: game.Name,
+              platform: game.Platform,
+              year: game.Year,
+              genre: game.Genre,
+              publisher: game.Publisher,
+              nasales: game.NA_Sales,
+              eusales: game.EU_Sales,
+              jpsales: game.JP_Sales,
+              othersales: game.Other_Sales,
+              globalsales: game.Global_Sales,
+            });
+            game1.save();
+          });
+          res.redirect("/main");
+        } else {
+          if (!err) {
+            resolve(foundGames);
+            // res.redirect('/main')
+          } else {
+            reject("fail");
+          }
+        }
       });
-      res.redirect('/main')
-    } else {
-      
-      if (!err) {
-    resolve(foundGames);
-    // res.redirect('/main')
-  } else {
-    reject('fail');
-  }
-      
-    }
-  })
+    });
+  };
 
+  var callMyPromise = async () => {
+    var result = await myPromise();
+    return result;
+  };
 
-})
-}
-
-var callMyPromise = async () => {
-  var result = await (myPromise());
-  return result;
-}
-
-
-  callMyPromise().then((result2)=>{
-    var data1 = addSales(result2)
-    return data1
-  }).then((result)=>{
-    // console.log(result)
-    res.send({
-      message: "We did it!",
-      // gamesList: foundGames[0].name,
-      json: updatedObject
-    // });
-  })
-  // .catch((message)=>{
-  //   console.log(message);
-  // });
-  })
-    
+  callMyPromise()
+    .then((result2) => {
+      var data1 = addSales(result2);
+      return data1;
+    })
+    .then((result) => {
+      res.send({
+        json: updatedObject,
+      });
+    });
 });
