@@ -77,6 +77,42 @@ let projectedChart = {
           ]
         }
       }]}; 
+
+      var pieChart = { 
+        debug: true, 
+        title_position: 'center', 
+        legend: { 
+          template: 
+            '%value {%percentOfTotal:n1}% %icon %name', 
+          position: 'inside left bottom'
+        }, 
+        defaultSeries: { 
+          type: 'pie', 
+          pointSelection: true
+        }, 
+        defaultPoint_label_text: '<b>%name</b>', 
+        title_label_text: 'Average Sales by Genre', 
+        yAxis: { label_text: 'Sales', formatString: 'n' }, 
+        series: [ 
+          { 
+            name: 'Genres', 
+            points: [ 
+              { name: "Sports", y: 30 },
+              { name: "Platform", y: 30 },
+              { name: "Racing", y: 30 },
+              { name: "Misc", y: 30 },
+              { name: "Shooter", y: 30 },
+              { name: "Role-Playing", y: 30.15 },
+              { name: "Puzzle", y: 118 },
+              { name: "Simulation", y: 136 },
+              { name: "Action", y: 130 },
+              { name: "Fighting", y: 136 },
+              { name: "Adventure", y: 136 },
+              { name: "Strategy", y: 136 },
+            ] 
+          } 
+        ] 
+      }; 
   
 
-export { config, projectedChart, divStyle };
+export { config, projectedChart, pieChart, divStyle };
