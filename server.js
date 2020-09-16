@@ -56,6 +56,15 @@ const gameSchema = new mongoose.Schema({
 
 const Game = mongoose.model("Game", gameSchema);
 
+const userSchema = new mongoose.Schema({
+  user: String,
+  password: String
+})
+
+const User = mongoose.model("User", userSchema)
+
+
+
 async function secondFunction() {
   let result = await firstFunction();
 }
@@ -106,13 +115,17 @@ function addSales(foundGames) {
       }
     });
     if (foundGames.length > 50) {
-      console.log(updatedObject)
+      // console.log(updatedObject)
       resolve("success");
     } else {
       reject("fail");
     }
   });
 }
+
+// app.post("/signin", (req, res) => {
+//   res.send("hello")
+// });
 
 app.get("/", (req, res) => {
   res.redirect("/main");

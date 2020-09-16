@@ -1,7 +1,5 @@
 import React from "react";
 import {
-  Button,
-  ButtonGroup,
   Navbar,
   Nav,
 } from "react-bootstrap";
@@ -15,6 +13,7 @@ function Header() {
           <Nav className="mr-auto">
             <Nav.Link href="/main">Historical Sales</Nav.Link>
             <Nav.Link href="/projected">Projected Sales</Nav.Link>
+            <Nav.Link href="/piechart">Market Percent</Nav.Link>
           </Nav>
         </Navbar>
       </header>
