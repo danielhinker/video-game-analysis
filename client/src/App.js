@@ -20,11 +20,6 @@ import {
   ButtonGroup,
 } from "react-bootstrap";
 
-// import { pieCha}
-
-
-
-
 
 function Signin() {
 
@@ -45,7 +40,7 @@ function App() {
   const [pieConfig, setPieConfig] = useState();
 
   useEffect(() => {
-    Axios.get("http://localhost:5000/")
+    Axios.get("http://localhost:5000/main")
       .then((res) => {
         let newConfig = changeConfig(res.data, "globalsales");
         let newProjectedConfig = changeProjectedConfig(res.data, "globalsales");
@@ -83,7 +78,6 @@ function App() {
           </Route>
           <Route path="/signin">
             <Signin></Signin>
-              {/* <Main games={games.object} config={config.config}></Main> */}
             </Route>
             <Route path="/main">
               <Main games={games.object} config={config.config}></Main>

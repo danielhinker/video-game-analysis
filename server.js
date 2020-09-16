@@ -10,6 +10,7 @@ const path = require("path");
 const csv = require("csv-parser");
 const { default: Axios } = require("axios");
 const helperObject = require("./helper.js");
+const { type } = require("os");
 
 let updatedObject = helperObject.updatedObject;
 
@@ -69,6 +70,18 @@ async function secondFunction() {
   let result = await firstFunction();
 }
 
+function checkMax(game, type) {
+  if (parseFloat(game[type]) > updatedObject[game.genre][type].highest) {
+    updatedObject[game.genre][type].highest = parseFloat(game[type]);
+  }
+}
+
+function checkMin(game, type) {
+  if (parseFloat(game[type]) < updatedObject[game.genre][type].highest) {
+    updatedObject[game.genre][type].lowest = parseFloat(game[type]);
+  }
+}
+
 function addSales(foundGames) {
   return new Promise((resolve, reject) => {
     foundGames.map((e) => {
@@ -76,37 +89,11 @@ function addSales(foundGames) {
         updatedObject[e.genre].globalsales.totalsales += parseFloat(
           e.globalsales
         );
-        if (
-          parseFloat(e.globalsales) > updatedObject[e.genre].globalsales.highest
-        ) {
-          updatedObject[e.genre].globalsales.highest = parseFloat(
-            e.globalsales
-          );
-        }
-        if (parseFloat(e.nasales) > updatedObject[e.genre].nasales.highest) {
-          updatedObject[e.genre].nasales.highest = parseFloat(e.nasales);
-        }
-        if (parseFloat(e.eusales) > updatedObject[e.genre].eusales.highest) {
-          updatedObject[e.genre].eusales.highest = parseFloat(e.eusales);
-        }
-        if (parseFloat(e.jpsales) > updatedObject[e.genre].jpsales.highest) {
-          updatedObject[e.genre].jpsales.highest = parseFloat(e.jpsales);
-        }
-
-        if (
-          parseFloat(e.globalsales) < updatedObject[e.genre].globalsales.lowest
-        ) {
-          updatedObject[e.genre].globalsales.lowest = parseFloat(e.globalsales);
-        }
-        if (parseFloat(e.nasales) < updatedObject[e.genre].nasales.lowest) {
-          updatedObject[e.genre].nasales.lowest = parseFloat(e.nasales);
-        }
-        if (parseFloat(e.eusales) < updatedObject[e.genre].eusales.lowest) {
-          updatedObject[e.genre].eusales.lowest = parseFloat(e.eusales);
-        }
-        if (parseFloat(e.jpsales) < updatedObject[e.genre].jpsales.lowest) {
-          updatedObject[e.genre].jpsales.lowest = parseFloat(e.jpsales);
-        }
+        let type = ["globalsales", "nasales", "eusales", "jpsales"]
+        type.map(type=>{
+          checkMax(e, type)
+          checkMin(e, type)
+        })
 
         updatedObject[e.genre].nasales.totalsales += parseFloat(e.nasales);
         updatedObject[e.genre].eusales.totalsales += parseFloat(e.eusales);
