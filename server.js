@@ -18,6 +18,8 @@ app.use(cors());
 app.listen(port, () => console.log("Backend server live on " + port));
 
 app.use(express.static("public"));
+app.use(express.json())
+// app.use(express.urlencoded());
 
 var data = [];
 
@@ -64,8 +66,6 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema)
 
-
-
 async function secondFunction() {
   let result = await firstFunction();
 }
@@ -77,7 +77,7 @@ function checkMax(game, type) {
 }
 
 function checkMin(game, type) {
-  if (parseFloat(game[type]) < updatedObject[game.genre][type].highest) {
+  if (parseFloat(game[type]) < updatedObject[game.genre][type].lowest) {
     updatedObject[game.genre][type].lowest = parseFloat(game[type]);
   }
 }
@@ -85,7 +85,7 @@ function checkMin(game, type) {
 function addSales(foundGames) {
   return new Promise((resolve, reject) => {
     foundGames.map((e) => {
-      if (updatedObject[e.genre].count < 500) {
+      if (updatedObject[e.genre].count < 400) {
         updatedObject[e.genre].globalsales.totalsales += parseFloat(
           e.globalsales
         );
@@ -102,7 +102,6 @@ function addSales(foundGames) {
       }
     });
     if (foundGames.length > 50) {
-      // console.log(updatedObject)
       resolve("success");
     } else {
       reject("fail");
@@ -110,9 +109,18 @@ function addSales(foundGames) {
   });
 }
 
-// app.post("/signin", (req, res) => {
-//   res.send("hello")
-// });
+app.post("/signin", (req, res) => {
+  // if (userObject.user == 'admin' && userObject.password == 'admin') {
+    console.log(req.body)
+    if (req.body.user == 'admin' && req.body.password == 'admin') {
+      // res.send({ config: 'asd', message: 'z' })
+      res.send('success')
+    } else {
+      res.send('fail')
+    }
+    // if (req.body)
+  
+});
 
 app.get("/", (req, res) => {
   res.redirect("/main");
@@ -164,7 +172,7 @@ app.get("/main", async (req, res) => {
       var data1 = addSales(result2);
       return data1;
     })
-    .then((result) => {
+    .then(() => {
       res.send({
         json: updatedObject,
       });
