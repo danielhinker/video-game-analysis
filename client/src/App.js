@@ -14,22 +14,34 @@ import Footer from "./components/Footer";
 import { Projected, changeProjectedConfig } from "./components/Projected";
 import { Main, changeConfig } from "./components/Main";
 import { PieChart, changePieChart } from "./components/PieChart";
-import {
-  Spinner,
-  Button,
-  ButtonGroup,
-} from "react-bootstrap";
-
+import { Spinner, Button, ButtonGroup } from "react-bootstrap";
 
 function Signin() {
+  const [status, setStatus] = useState(false);
+  const [info, setInfo] = useState({
+    username: "",
+    password: "",
+  });
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+  }
 
   // const userObject = {
-  //   user: '',
-  //   password: '';
+  //   user: 'admin',
+  //   password: 'admin'
   // }
-  // Axios.post('/signin', )
+  // Axios.post('http://localhost:5000/signin', userObject).then(res=>{
+  //   console.log(res.data)
+  // })
 
-  return <h1>Sign in</h1>
+  return (
+    <div>
+  <h1>Sign in</h1>
+  <input onChange={handleChange} value={info.username} name="username" placeholder="username"></input>
+  <input onChange={handleChange} value={info.password} name="password" placeholder="password"></input>
+  </div>
+  );
 }
 
 function App() {
@@ -59,12 +71,12 @@ function App() {
   if (isLoading) {
     return (
       <div>
-      {/* <Header></Header> */}
-      <Spinner animation="border" role="status" style={{margin: "30% 50%"}}>
-      <span className="sr-only">Loading...</span>
-    </Spinner>
-    {/* <Footer></Footer> */}
-    </div>
+        {/* <Header></Header> */}
+        <Spinner animation="border" role="status" style={{ margin: "30% 50%" }}>
+          <span className="sr-only">Loading...</span>
+        </Spinner>
+        {/* <Footer></Footer> */}
+      </div>
     );
   } else {
     return (
@@ -73,11 +85,14 @@ function App() {
 
         <Router>
           <Switch>
-          <Route path="/piechart">
-            <PieChart games={games.object} config={pieConfig.config}></PieChart>
-          </Route>
-          <Route path="/signin">
-            <Signin></Signin>
+            <Route path="/piechart">
+              <PieChart
+                games={games.object}
+                config={pieConfig.config}
+              ></PieChart>
+            </Route>
+            <Route path="/signin">
+              <Signin></Signin>
             </Route>
             <Route path="/main">
               <Main games={games.object} config={config.config}></Main>
