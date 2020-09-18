@@ -115,6 +115,6 @@ var pieChart = {
   ],
 };
 
-let BASE_URL = "https://pacific-ocean-02192.herokuapp.com/"
+let BASE_URL = "https://video-game-analysis.herokuapp.com/";
 
 export { config, projectedChart, pieChart, divStyle, BASE_URL };

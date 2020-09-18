@@ -2,10 +2,7 @@ import React, { useState } from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
 import { JSCharting } from "jscharting-react";
 import { projectedChart, divStyle } from "../helper";
-import {
-  BrowserRouter as Router,
-  Redirect,
-} from "react-router-dom";
+import { BrowserRouter as Router, Redirect } from "react-router-dom";
 
 function changeProjectedConfig(games, type) {
   let object = JSON.stringify(games);

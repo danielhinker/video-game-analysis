@@ -11,7 +11,6 @@ const csv = require("csv-parser");
 const { default: Axios } = require("axios");
 const helperObject = require("./helper.js");
 
-
 let updatedObject = helperObject.updatedObject;
 
 let info = {
@@ -20,13 +19,11 @@ let info = {
   password: process.env.password,
 };
 
-
 app.use(cors());
 app.listen(port, () => console.log("Backend server live on " + port));
-
 app.use(express.static("public"));
-// app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(express.json());
+// app.use(express.static(path.join(__dirname, 'client/build')));
 
 var data = [];
 
@@ -36,7 +33,7 @@ function firstFunction() {
       .pipe(csv())
       .on("data", function (row) {
         // if (data.length < 15000) {
-          data.push(row);
+        data.push(row);
         // }
       })
       .on("end", function () {
@@ -45,17 +42,19 @@ function firstFunction() {
   });
 }
 
-// mongoose.connect("mongodb://localhost:27017/salesDB", {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
-
-mongoose.connect("mongodb+srv://" + info.username + ":" + info.password + "@cluster0.memc3.mongodb.net/" + info.db + "?retryWrites=true&w=majority", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-
+mongoose.connect(
+  "mongodb+srv://" +
+    info.username +
+    ":" +
+    info.password +
+    "@cluster0.memc3.mongodb.net/" +
+    info.db +
+    "?retryWrites=true&w=majority",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
 
 const gameSchema = new mongoose.Schema({
   rank: String,
@@ -152,12 +151,10 @@ app.get("/main", async (req, res) => {
   await secondFunction();
   var myPromise = () => {
     return new Promise((resolve, reject) => {
-      
       Game.find({}, function (err, foundGames) {
-        console.log(foundGames.length)
-        
-        if (foundGames.length < 500) {
+        console.log(foundGames.length);
 
+        if (foundGames.length < 500) {
           data.map((game) => {
             const game1 = new Game({
               rank: game.Rank,

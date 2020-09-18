@@ -11,8 +11,8 @@ import { Main, changeConfig } from "./components/Main";
 import { PieChart, changePieChart } from "./components/PieChart";
 import { Spinner, ButtonGroup } from "react-bootstrap";
 import Login from "./components/Login";
-import {NotFound} from "./components/NotFound"
-import {BASE_URL} from "./helper";
+import { NotFound } from "./components/NotFound";
+import { BASE_URL } from "./helper";
 
 function App() {
   const [games, setGames] = useState();
@@ -102,6 +102,5 @@ function App() {
     );
   }
 }
-
 
 export default App;

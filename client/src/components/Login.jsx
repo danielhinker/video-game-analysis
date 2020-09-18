@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { Route, Redirect, useHistory } from "react-router-dom";
 import { Button, Form } from "react-bootstrap";
-import "./Login.css"
-let BASE_URL = "https://pacific-ocean-02192.herokuapp.com/"
+import "./Login.css";
+import { BASE_URL } from "../helper"
 
 export default function Login(props) {
   const [status, setStatus] = useState();
@@ -55,9 +55,8 @@ export default function Login(props) {
   }
   return (
     <div>
-      
       <div className="Login">
-      <h1>Video Game Analysis</h1>
+        <h1>Video Game Analysis</h1>
         <Form className="Login">
           <Form.Group>
             <Form.Label>Username</Form.Label>
