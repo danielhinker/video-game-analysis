@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Axios from "axios";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -66,7 +66,8 @@ function App() {
         <Router>
           <Switch>
             <Route exact path="/">
-              <Login onChange={handleChange}></Login>
+              {/* <Login onChange={handleChange}></Login> */}
+              <Redirect to="/index"></Redirect>
             </Route>
 
             <Route path="/piechart">

@@ -16,9 +16,9 @@ function Header() {
           <Nav.Link href="/index">Historical Sales</Nav.Link>
           <Nav.Link href="/projected">Projected Sales</Nav.Link>
           <Nav.Link href="/piechart">Market Percent</Nav.Link>
-          <Nav.Link href="/" onClick={logout}>
+          {/* <Nav.Link href="/" onClick={logout}>
             Log out
-          </Nav.Link>
+          </Nav.Link> */}
         </Nav>
       </Navbar>
     </header>

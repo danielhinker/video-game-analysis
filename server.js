@@ -73,7 +73,7 @@ const gameSchema = new mongoose.Schema({
 const Game = mongoose.model("Game", gameSchema);
 
 const userSchema = new mongoose.Schema({
-  user: String,
+  username: String,
   password: String,
 });
 
@@ -122,7 +122,7 @@ function addSales(foundGames) {
   });
 }
 
-let isAuthenticated = false;
+let isAuthenticated = true;
 
 app.get("/loggedin", (req, res) => {
   res.send(isAuthenticated);
@@ -134,7 +134,6 @@ app.get("/logout", (req, res) => {
 });
 
 app.post("/signin", (req, res) => {
-  console.log(req.body);
   if (req.body.username == "admin" && req.body.password == "admin") {
     isAuthenticated = true;
     res.send("success");
