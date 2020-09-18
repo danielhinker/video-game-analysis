@@ -49,7 +49,7 @@ export default function Login(props) {
   if (status == "success") {
     return (
       <Route>
-        <Redirect to="/main"></Redirect>
+        <Redirect to="/index"></Redirect>
       </Route>
     );
   }

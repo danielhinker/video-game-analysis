@@ -77,7 +77,7 @@ function App() {
               ></PieChart>
             </Route>
 
-            <Route exact path="/main">
+            <Route exact path="/index">
               <Main
                 games={games.object}
                 config={config.config}

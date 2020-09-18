@@ -47,6 +47,7 @@ function Main(props) {
 
   return (
     <div>
+    <h1>Average Sales in Millions</h1>
       <div style={divStyle}>
         <JSCharting options={graph.config} />
       </div>
