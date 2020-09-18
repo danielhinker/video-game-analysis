@@ -14,7 +14,7 @@ const helperObject = require("./helper.js");
 
 let updatedObject = helperObject.updatedObject;
 
-let s3 = {
+let info = {
   db: process.env.db,
   username: process.env.username,
   password: process.env.password,
@@ -35,9 +35,9 @@ function firstFunction() {
     fs.createReadStream("client/public/vgsales.csv")
       .pipe(csv())
       .on("data", function (row) {
-        if (data.length < 5000) {
+        // if (data.length < 15000) {
           data.push(row);
-        }
+        // }
       })
       .on("end", function () {
         resolve(data);
@@ -45,15 +45,17 @@ function firstFunction() {
   });
 }
 
-mongoose.connect("mongodb://localhost:27017/salesDB", {
+// mongoose.connect("mongodb://localhost:27017/salesDB", {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
+mongoose.connect("mongodb+srv://" + info.username + ":" + info.password + "@cluster0.memc3.mongodb.net/" + info.db + "?retryWrites=true&w=majority", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-// mongoose.connect("mongodb+srv://" + s3.username + ":" + s3.password + "@cluster0.memc3.mongodb.net/" + s3.db + "?retryWrites=true&w=majority", {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
+
 
 const gameSchema = new mongoose.Schema({
   rank: String,
@@ -149,11 +151,14 @@ app.get("/", (req, res) => {
 });
 
 app.get("/main", async (req, res) => {
+  await secondFunction();
   var myPromise = () => {
     return new Promise((resolve, reject) => {
+      
       Game.find({}, function (err, foundGames) {
-        if (foundGames.length < 500) {
-          secondFunction();
+        console.log(foundGames.length)
+        
+        if (foundGames.length < 16000) {
 
           data.map((game) => {
             const game1 = new Game({
