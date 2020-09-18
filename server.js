@@ -144,9 +144,9 @@ app.post("/signin", (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
-  res.redirect("/main");
-});
+// app.get("/", (req, res) => {
+//   res.redirect("/main");
+// });
 
 app.get("/main", async (req, res) => {
   await secondFunction();
