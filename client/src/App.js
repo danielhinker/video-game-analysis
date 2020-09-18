@@ -2,90 +2,15 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Axios from "axios";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-  useHistory,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { Projected, changeProjectedConfig } from "./components/Projected";
 import { Main, changeConfig } from "./components/Main";
 import { PieChart, changePieChart } from "./components/PieChart";
-import { Spinner, Button, ButtonGroup } from "react-bootstrap";
-
-function Signin(props) {
-  const [status, setStatus] = useState();
-  const [info, setInfo] = useState({
-    username: "",
-    password: "",
-  });
-  const history = useHistory();
-
-  function handleChange(event) {
-    const { name, value } = event.target;
-    setInfo((prevInfo) => {
-      return {
-        ...prevInfo,
-        [name]: value,
-      };
-    });
-  }
-
-  useEffect(() => {
-    Axios.get("http://localhost:5000/loggedin").then((res) => {
-      if (res.data) {
-        setStatus("success");
-        props.onChange(true);
-        console.log(res.data);
-      } else {
-        console.log(res.data);
-      }
-    });
-  });
-
-  function handleSubmit(event) {
-    Axios.post("http://localhost:5000/signin", info).then((res) => {
-      console.log(res);
-    });
-
-    setInfo({
-      username: "",
-      password: "",
-    });
-  }
-
-  if (status == "success") {
-    return (
-      <Route>
-        <Redirect to="/main"></Redirect>
-      </Route>
-    );
-  }
-  return (
-    <div>
-      <h1>Sign in</h1>
-      <input
-        onChange={handleChange}
-        value={info.username}
-        name="username"
-        placeholder="username"
-      ></input>
-      <input
-        onChange={handleChange}
-        value={info.password}
-        name="password"
-        placeholder="password"
-      ></input>
-      <button onClick={handleSubmit}>Submit</button>
-
-      <p>{status}</p>
-    </div>
-  );
-}
+import { Spinner, ButtonGroup } from "react-bootstrap";
+import { Login } from "./components/Login";
 
 function App() {
   const [games, setGames] = useState();
@@ -94,7 +19,6 @@ function App() {
   const [projectedConfig, setProjectedConfig] = useState();
   const [pieConfig, setPieConfig] = useState();
   const [status, setStatus] = useState(false);
-  const [refresh, setRefresh] = useState();
 
   function handleChange(newValue) {
     setStatus(newValue);
@@ -139,11 +63,9 @@ function App() {
 
         <Router>
           <Switch>
-            {/* <Router> */}
             <Route exact path="/">
-              <Signin onChange={handleChange}></Signin>
+              <Login onChange={handleChange}></Login>
             </Route>
-            {/* </Router> */}
 
             <Route path="/piechart">
               <PieChart
