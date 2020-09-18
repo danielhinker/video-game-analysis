@@ -4,12 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "run-p dev:**",
+    "dev:server": "nodemon server.js",
+    "dev:app": "cd client && yarn start",
+    "build:app": "cd client && yarn build",
+    "start": "node server.js",
+    "heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.754.0",
     "axios": "^0.20.0",
     "cors": "^2.8.5",
     "csv-parser": "^2.3.3",

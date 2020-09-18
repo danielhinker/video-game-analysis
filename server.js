@@ -3,44 +3,57 @@ const express = require("express"),
   port = process.env.PORT || 5000,
   cors = require("cors");
 
-const mongoose = require('mongoose');
-const papa = require('papaparse')
-// const cors = require("cors")
-const fs = require('fs');
-const path = require('path');
-const csv = require('csv-parser')
+const mongoose = require("mongoose");
+const papa = require("papaparse");
+const fs = require("fs");
+const path = require("path");
+const csv = require("csv-parser");
+const { default: Axios } = require("axios");
+const helperObject = require("./helper.js");
+
+
+let updatedObject = helperObject.updatedObject;
+
+let s3 = {
+  db: process.env.db,
+  username: process.env.username,
+  password: process.env.password,
+};
+
 
 app.use(cors());
 app.listen(port, () => console.log("Backend server live on " + port));
 
 app.use(express.static("public"));
+// app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.json());
 
-
-var data = []
+var data = [];
 
 function firstFunction() {
   return new Promise((resolve, reject) => {
-
-  
-fs.createReadStream('client/public/small_vgsales.csv')
-.pipe(csv())
-.on('data', function (row) {
-  // if (row.Rank == 1) {
-  data.push(row)
-  // resolve(data)
-  // console.log(row)
-})
-.on('end', function () {
-  // console.log('Data loaded')
-  // console.log(data)
-  resolve(data)
-})
-
-
-})
+    fs.createReadStream("client/public/vgsales.csv")
+      .pipe(csv())
+      .on("data", function (row) {
+        if (data.length < 5000) {
+          data.push(row);
+        }
+      })
+      .on("end", function () {
+        resolve(data);
+      });
+  });
 }
 
-mongoose.connect("mongodb://localhost:27017/salesDB", { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb://localhost:27017/salesDB", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+// mongoose.connect("mongodb+srv://" + s3.username + ":" + s3.password + "@cluster0.memc3.mongodb.net/" + s3.db + "?retryWrites=true&w=majority", {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
 
 const gameSchema = new mongoose.Schema({
   rank: String,
@@ -53,155 +66,143 @@ const gameSchema = new mongoose.Schema({
   eusales: String,
   jpsales: String,
   othersales: String,
-  globalsales: String
+  globalsales: String,
 });
 
 const Game = mongoose.model("Game", gameSchema);
 
+const userSchema = new mongoose.Schema({
+  user: String,
+  password: String,
+});
+
+const User = mongoose.model("User", userSchema);
+
 async function secondFunction() {
-  console.log("before")
-  let result = await firstFunction()
-  console.log(typeof result[0].Rank)
-  console.log("after")
-  
-  // console.log(data)
+  let result = await firstFunction();
 }
 
+function checkMax(game, type) {
+  if (parseFloat(game[type]) > updatedObject[game.genre][type].highest) {
+    updatedObject[game.genre][type].highest = parseFloat(game[type]);
+  }
+}
 
-// const gamesList;
-let gamesList;
+function checkMin(game, type) {
+  if (parseFloat(game[type]) < updatedObject[game.genre][type].lowest) {
+    updatedObject[game.genre][type].lowest = parseFloat(game[type]);
+  }
+}
 
-    
-app.get("/get/", (req, res) => {
+function addSales(foundGames) {
+  return new Promise((resolve, reject) => {
+    foundGames.map((e) => {
+      if (updatedObject[e.genre].count < 400) {
+        updatedObject[e.genre].globalsales.totalsales += parseFloat(
+          e.globalsales
+        );
+        let type = ["globalsales", "nasales", "eusales", "jpsales"];
+        type.map((type) => {
+          checkMax(e, type);
+          checkMin(e, type);
+        });
 
-  
-
-  Game.find({}, function(err, foundGames) {
-    console.log(foundGames)
-    let series = [
-      {
-        name: 'Team', 
-        palette: 'default', 
-        points: [ 
-          { name: 'Sports', y: 15.15 }, 
-          { name: 'Platform', y: 118 }, 
-          { name: 'Racing', y: 136 }, 
-          { name: 'Misc', y: 130 }, 
-          { name: 'Shooter', y: 123 } 
-        ] 
+        updatedObject[e.genre].nasales.totalsales += parseFloat(e.nasales);
+        updatedObject[e.genre].eusales.totalsales += parseFloat(e.eusales);
+        updatedObject[e.genre].jpsales.totalsales += parseFloat(e.jpsales);
+        updatedObject[e.genre].count += 1;
       }
-    ]
-    // gamesList = foundGames;
-    
-    // console.log(foundGames)
-    // console.log(foundGames)
+    });
+    if (foundGames.length > 50) {
+      resolve("success");
+    } else {
+      reject("fail");
+    }
+  });
+}
 
-      // res.send({ gamesList: foundGames[0].name});
+let isAuthenticated = false;
 
+function checkLogin() {}
 
+app.get("/loggedin", (req, res) => {
+  res.send(isAuthenticated);
+});
 
-  })
-})
+app.get("/logout", (req, res) => {
+  isAuthenticated = false;
+  res.send("successfully logged out");
+});
 
+app.post("/signin", (req, res) => {
+  console.log(req.body);
+  if (req.body.username == "admin" && req.body.password == "admin") {
+    isAuthenticated = true;
+    res.send("success");
+  } else {
+    res.send("fail");
+  }
+});
 
 app.get("/", (req, res) => {
-
-  // res.send({message:"We did it!"})
-  Game.find({}, function(err, foundGames) {
-    // gamesList = foundGames;
-    let totalSales = 0;
-    let salesObject = [ 
-      { name: 'Sports', y: 0, count: 0 }, 
-      { name: 'Platform', y: 0, count: 0 }, 
-      { name: 'Racing', y: 0, count: 0 }, 
-      { name: 'Misc', y: 0, count: 0 }, 
-      { name: 'Shooter', y: 0, count: 0 } 
-    ] 
-
-    let updatedObject = {
-      'Sports': {y: 0, count: 0},
-      'Platform': {y: 0, count: 0},
-      'Racing': {y: 0, count: 0},
-      'Misc': {y: 0, count: 0},
-      'Shooter': {y: 0, count: 0},
-    }
-
-    foundGames.map(e=>{
-      switch (e.genre) {
-        case 'Sports':
-          if (updatedObject[e.genre].count != 100) {
-            updatedObject[e.genre].y += parseInt(e.globalsales)
-            updatedObject[e.genre].count += 1
-          }
-          break;
-        case 'Platform':
-          if (updatedObject[e.genre].count != 100) {
-          updatedObject[e.genre].y += parseInt(e.globalsales)
-          updatedObject[e.genre].count += 1
-          }
-          break;
-        case 'Racing':
-          if (updatedObject[e.genre].count != 100) {
-          updatedObject[e.genre].y += parseInt(e.globalsales)
-          updatedObject[e.genre].count += 1
-          }
-          break;
-        case 'Misc':
-          if (updatedObject[e.genre].count != 100) {
-          updatedObject[e.genre].y += parseInt(e.globalsales)
-          updatedObject[e.genre].count += 1
-          }
-          break;
-        case 'Shooter':
-          if (updatedObject[e.genre].count != 100) {
-          updatedObject[e.genre].y += parseInt(e.globalsales)
-          updatedObject[e.genre].count += 1
-          }
-          break;
-
-        default:
-      }
-      
-
-      // if (e.genre == 'Sports') {
-      // es
-      // console.log(totalSales)
-    // } else if (e.genre == 'Platform/') {
-
-    // }
-    });
-    console.log(salesObject[0].y)
-    // console.log(foundGames[1].globalsales)
-    // console.log(foundGames)
-      res.send({ message: "We did it!", gamesList: foundGames[0].name, sports: updatedObject.Sports.y,
-    platform: updatedObject.Platform.y, racing: updatedObject.Racing.y, misc: updatedObject.Misc.y,
-    shooter: updatedObject.Shooter.y });
-    if (foundGames.length === 0) {
-        secondFunction();
-        console.log("no games")
-        
-        data.map((game)=>{
-            const game1 = new Game({
-                rank: game.Rank,
-                name: game.Name,
-                platform: game.Platform,
-                year: game.Year,
-                genre: game.Genre,
-                publisher: game.Publisher,
-                nasales: game.NA_Sales,
-                eusales: game.EU_Sales,
-                jpsales: game.JP_Sales,
-                othersales: game.Other_Sales,
-                globalsales: game.Global_Sales
-            });
-            game1.save()
-  
-        })
-      }}).then((data)=>{
-        
-      });
-  
-  // secondFunction()
-  // console.log(gamesList)
-  
+  res.redirect("/main");
 });
+
+app.get("/main", async (req, res) => {
+  var myPromise = () => {
+    return new Promise((resolve, reject) => {
+      Game.find({}, function (err, foundGames) {
+        if (foundGames.length < 500) {
+          secondFunction();
+
+          data.map((game) => {
+            const game1 = new Game({
+              rank: game.Rank,
+              name: game.Name,
+              platform: game.Platform,
+              year: game.Year,
+              genre: game.Genre,
+              publisher: game.Publisher,
+              nasales: game.NA_Sales,
+              eusales: game.EU_Sales,
+              jpsales: game.JP_Sales,
+              othersales: game.Other_Sales,
+              globalsales: game.Global_Sales,
+            });
+            game1.save();
+          });
+          res.redirect("/main");
+        } else {
+          if (!err) {
+            resolve(foundGames);
+          } else {
+            reject("fail");
+          }
+        }
+      });
+    });
+  };
+
+  var callMyPromise = async () => {
+    var result = await myPromise();
+    return result;
+  };
+
+  callMyPromise()
+    .then((result2) => {
+      var data1 = addSales(result2);
+      return data1;
+    })
+    .then(() => {
+      res.send({
+        json: updatedObject,
+      });
+    });
+});
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "client/build")));
+  app.get("*", function (req, res) {
+    res.sendFile(path.join(__dirname, "client/build", "index.html"));
+  });
+}
