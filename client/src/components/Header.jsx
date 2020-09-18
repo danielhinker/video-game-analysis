@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Navbar, Nav } from "react-bootstrap";
 import Axios from "axios";
-import {BASE_URL} from "./helper";
+import {BASE_URL} from "../helper";
 
 function Header() {
   // const [status, setStatus] = useState(props.status)
