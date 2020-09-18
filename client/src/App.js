@@ -12,6 +12,7 @@ import { PieChart, changePieChart } from "./components/PieChart";
 import { Spinner, ButtonGroup } from "react-bootstrap";
 import Login from "./components/Login";
 import {NotFound} from "./components/NotFound"
+import {BASE_URL} from "./helper";
 
 function App() {
   const [games, setGames] = useState();
@@ -27,7 +28,7 @@ function App() {
 
   useEffect(() => {
     // Axios.get("https://pacific-ocean-02192.herokuapp.com/main")
-    Axios.get("http://localhost:3000/main")
+    Axios.get(BASE_URL + "main")
       .then((res) => {
         let newConfig = changeConfig(res.data, "globalsales");
         let newProjectedConfig = changeProjectedConfig(res.data, "globalsales");
@@ -44,7 +45,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    Axios.get("http://localhost:3000/loggedin").then((res) => {
+    Axios.get(BASE_URL + "loggedin").then((res) => {
       setStatus(res.data);
     });
   });

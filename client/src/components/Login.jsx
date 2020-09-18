@@ -3,6 +3,7 @@ import Axios from "axios";
 import { Route, Redirect, useHistory } from "react-router-dom";
 import { Button, Form } from "react-bootstrap";
 import "./Login.css"
+let BASE_URL = "https://pacific-ocean-02192.herokuapp.com/"
 
 export default function Login(props) {
   const [status, setStatus] = useState();
@@ -23,7 +24,7 @@ export default function Login(props) {
   }
 
   useEffect(() => {
-    Axios.get("http://localhost:5000/loggedin").then((res) => {
+    Axios.get(BASE_URL + "loggedin").then((res) => {
       if (res.data) {
         setStatus("success");
         props.onChange(true);
@@ -35,7 +36,7 @@ export default function Login(props) {
   });
 
   function handleSubmit(event) {
-    Axios.post("http://localhost:5000/signin", info).then((res) => {
+    Axios.post(BASE_URL + "signin", info).then((res) => {
       console.log(res);
     });
 

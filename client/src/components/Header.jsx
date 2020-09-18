@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Navbar, Nav } from "react-bootstrap";
 import Axios from "axios";
+import {BASE_URL} from "./helper";
 
 function Header() {
   // const [status, setStatus] = useState(props.status)
   function logout() {
-    Axios.get("http://localhost:5000/logout");
+    Axios.get(BASE_URL + "logout");
   }
 
   return (

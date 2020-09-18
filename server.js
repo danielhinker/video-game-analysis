@@ -125,8 +125,6 @@ function addSales(foundGames) {
 
 let isAuthenticated = false;
 
-function checkLogin() {}
-
 app.get("/loggedin", (req, res) => {
   res.send(isAuthenticated);
 });
@@ -158,7 +156,7 @@ app.get("/main", async (req, res) => {
       Game.find({}, function (err, foundGames) {
         console.log(foundGames.length)
         
-        if (foundGames.length < 16000) {
+        if (foundGames.length < 500) {
 
           data.map((game) => {
             const game1 = new Game({

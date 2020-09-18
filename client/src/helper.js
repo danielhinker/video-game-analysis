@@ -115,4 +115,6 @@ var pieChart = {
   ],
 };
 
-export { config, projectedChart, pieChart, divStyle };
+let BASE_URL = "https://pacific-ocean-02192.herokuapp.com/"
+
+export { config, projectedChart, pieChart, divStyle, BASE_URL };
