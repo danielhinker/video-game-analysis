@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
-import {
-  Route,
-  Redirect,
-  useHistory
-} from "react-router-dom";
+import { Route, Redirect, useHistory } from "react-router-dom";
 import { Button, Form } from "react-bootstrap";
+import "./Login.css"
 
-export function Login(props) {
+export default function Login(props) {
   const [status, setStatus] = useState();
   const [info, setInfo] = useState({
     username: "",
@@ -56,31 +53,38 @@ export function Login(props) {
     );
   }
   return (
-
-
     <div>
-      <h1>Sign in</h1>
-      <div>
-        <Form>
-          <Form.Group controlId="formBasicEmail">
+      
+      <div className="Login">
+      <h1>Video Game Analysis</h1>
+        <Form className="Login">
+          <Form.Group>
             <Form.Label>Username</Form.Label>
-            <Form.Control onChange={handleChange} value={info.username} name="username" type="username" placeholder="Enter username" />
-            <Form.Text className="text-muted">
-              We'll never share your email with anyone else.
-    </Form.Text>
+            <Form.Control
+              onChange={handleChange}
+              value={info.username}
+              name="username"
+              type="username"
+              placeholder="Enter username"
+            />
           </Form.Group>
 
-          <Form.Group controlId="formBasicPassword">
+          <Form.Group>
             <Form.Label>Password</Form.Label>
-            <Form.Control onChange={handleChange} value={info.password} name="password" type="password" placeholder="Password" />
+            <Form.Control
+              onChange={handleChange}
+              value={info.password}
+              name="password"
+              type="password"
+              placeholder="Password"
+            />
           </Form.Group>
 
           <Button onClick={handleSubmit} variant="primary" type="submit">
             Submit
-  </Button>
+          </Button>
         </Form>
       </div>
-
 
       <p>{status}</p>
     </div>

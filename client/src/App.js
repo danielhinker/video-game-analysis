@@ -10,7 +10,8 @@ import { Projected, changeProjectedConfig } from "./components/Projected";
 import { Main, changeConfig } from "./components/Main";
 import { PieChart, changePieChart } from "./components/PieChart";
 import { Spinner, ButtonGroup } from "react-bootstrap";
-import { Login } from "./components/Login";
+import Login from "./components/Login";
+import {NotFound} from "./components/NotFound"
 
 function App() {
   const [games, setGames] = useState();
@@ -91,7 +92,7 @@ function App() {
               />
             </Route>
 
-            <Route path="*" component={() => "404 not found"}></Route>
+            <Route path="*" component={NotFound}></Route>
           </Switch>
         </Router>
 
@@ -100,6 +101,6 @@ function App() {
     );
   }
 }
-// }
+
 
 export default App;
