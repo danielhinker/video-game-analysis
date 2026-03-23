@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: yarn
+          cache-dependency-path: |
+            yarn.lock
+            client/yarn.lock
+
+      - run: yarn install --frozen-lockfile
+
+      - run: yarn install --frozen-lockfile
+        working-directory: client
+
+      - run: yarn build:app
